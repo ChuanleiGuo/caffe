@@ -468,7 +468,7 @@ net[name] = L.MultiBoxLoss(*mbox_layers, multibox_loss_param=multibox_loss_param
 for roll_idx in range(1,rolling_time+1):
 ##################
     roll_layers = CreateRollingStruct_v1(net,from_layers_basename=mbox_source_layers,num_outputs=num_outputs,odd=odd,
-        rolling_rate=rolling_rate,roll_idx=roll_idx,conv2=False)
+        rolling_rate=rolling_rate,roll_idx=roll_idx,conv2=False,Normalize=False)
 
     mbox_layers = CreateMultiBoxHead_share_2x(net, data_layer='data', from_layers=roll_layers,
             use_batchnorm=use_batchnorm, min_sizes=min_sizes, max_sizes=max_sizes,
