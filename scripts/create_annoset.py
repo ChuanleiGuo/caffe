@@ -4,6 +4,10 @@ import shutil
 import subprocess
 import sys
 
+caffe_root  = "./"
+os.chdir(caffe_root)
+sys.path.insert(0, 'python')
+import caffe
 from caffe.proto import caffe_pb2
 from google.protobuf import text_format
 
