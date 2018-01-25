@@ -174,6 +174,7 @@ train_on_diff_gt = True
 normalization_mode = P.Loss.VALID
 code_type = P.PriorBox.CENTER_SIZE
 neg_pos_ratio = 3.
+mining_type = P.MultiBoxLoss.MAX_NEGATIVE
 #loc_weight = (neg_pos_ratio + 1.) / 4.
 loc_weight = 2.
 batch_sampler = [
@@ -324,7 +325,8 @@ multibox_loss_param = {
     'use_prior_for_matching': True,
     'background_label_id': background_label_id,
     'use_difficult_gt': train_on_diff_gt,
-    'do_neg_mining': True,
+#    'do_neg_mining': True,
+    'mining_type': mining_type,
     'neg_pos_ratio': neg_pos_ratio,
     'neg_overlap': 0.5,
     'code_type': code_type,
