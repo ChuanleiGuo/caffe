@@ -606,6 +606,26 @@ void DataTransformer<Dtype>::Transform(const cv::Mat& cv_img,
   CHECK_EQ(channels, img_channels);
   CHECK_GE(num, 1);
 
+  if(param_.hsv() && Rand(2)){
+     cv::Mat cv_hsv_img = cv::Mat(cv_img.rows,cv_img.cols,CV_32FC3);
+     cv::cvtColor(cv_img,cv_hsv_img,CV_BGR2HSV);
+     std::vector<cv::Mat> channels;
+     cv::split(cv_hsv_img, channels);
+     srand((unsigned)time(NULL));
+     float v_rate1 = float(rand()%600) / 1000 - 0.3;
+     float v_rate2 = float(rand()%600) / 1000 - 0.3;
+     //LOG(INFO) << "v_rate = " << v_rate1;
+     //LOG(INFO) << "v_rate = " << v_rate2;
+     cv::scaleAdd(channels[2],v_rate2,channels[2],channels[2]);
+     cv::scaleAdd(channels[1],v_rate1,channels[1],channels[1]);
+     cv::merge(channels,cv_hsv_img);
+     cv::cvtColor(cv_hsv_img,cv_img,CV_HSV2BGR);
+  }
+  if(param_.gaussianblur() && (Rand(5)%4 == 0)){
+     cv::GaussianBlur(cv_img,cv_img,cv::Size(3,3),1);
+     //LOG(INFO) << "Gsussian blur " ;
+  }
+
   const int crop_size = param_.crop_size();
   const Dtype scale = param_.scale();
   *do_mirror = param_.mirror() && Rand(2);
