@@ -604,8 +604,6 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
 #     dropout=False, freeze_layers=freeze_layers)
 ResNet50Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
 
-AddExtraLayers(net, use_batchnorm)
-
 resnet50_backend = net
 with open(backend_net_file, 'w') as f:
     net_param = resnet50_backend.to_proto()
@@ -617,6 +615,7 @@ with open(backend_net_file, 'w') as f:
         caffe_pb2.BlobShape(dim=[1, 3, resize_height, resize_width])])
     print(net_param, file=f)
 
+AddExtraLayers(net, use_batchnorm)
 
 # create normalizaion layers
 for i in range(len(normalizations)):
