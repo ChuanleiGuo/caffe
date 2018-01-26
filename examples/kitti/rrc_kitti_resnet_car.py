@@ -448,7 +448,7 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
 # VGGNetBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=True,
 #     dropout=False, freeze_layers=freeze_layers)
 
-ResNet101Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
+ResNet50Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
 
 AddExtraLayers(net, use_batchnorm)
 
@@ -497,7 +497,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
 
 # VGGNetBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=True,
 #     dropout=False, freeze_layers=freeze_layers)
-ResNet101Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
+ResNet50Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
 
 AddExtraLayers(net, use_batchnorm)
 
@@ -601,7 +601,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
         transform_param=test_transform_param)
 # VGGNetBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=True,
 #     dropout=False, freeze_layers=freeze_layers)
-ResNet101Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
+ResNet50Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
 
 AddExtraLayers(net, use_batchnorm)
 
