@@ -129,6 +129,7 @@ job_dir = "jobs/ResNet/KITTI/{}".format(job_name)
 train_net_file = "{}/train.prototxt".format(save_dir)
 test_net_file = "{}/test.prototxt".format(save_dir)
 deploy_net_file = "{}/deploy.prototxt".format(save_dir)
+backend_net_file = "{}/backend.prototxt".format(save_dir)
 solver_file = "{}/solver.prototxt".format(save_dir)
 # snapshot prefix.
 snapshot_prefix = "{}/{}".format(snapshot_dir, model_name)
@@ -602,6 +603,19 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
 # VGGNetBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=True,
 #     dropout=False, freeze_layers=freeze_layers)
 ResNet50Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
+
+resnet50_backend = net
+with open(backend_net_file, 'w') as f:
+    net_param = resnet50_backend.to_proto()
+    # Remove the first (AnnotatedData) and last (DetectionEvaluate) layer from test net.
+    del net_param.layer[0]
+    net_param.name = '{}_backend'.format(model_name)
+    net_param.input.extend(['data'])
+    net_param.input_shape.extend([
+        caffe_pb2.BlobShape(dim=[1, 3, resize_height, resize_width])])
+    print(net_param, file=f)
+
+AddExtraLayers(net, use_batchnorm)
 
 # create normalizaion layers
 for i in range(len(normalizations)):
