@@ -451,7 +451,7 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
 
 ResNet50Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
 
-AddExtraLayers(net, use_batchnorm)
+AddExtraLayers(net, use_batchnorm=True)
 
 mbox_layers = CreateMultiBoxHead_share_2x(net, data_layer='data', from_layers=mbox_source_layers,
         use_batchnorm=use_batchnorm, min_sizes=min_sizes, max_sizes=max_sizes,
@@ -500,7 +500,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
 #     dropout=False, freeze_layers=freeze_layers)
 ResNet50Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=True)
 
-AddExtraLayers(net, use_batchnorm)
+AddExtraLayers(net, use_batchnorm=True)
 
 # create normalizaion layers
 for i in range(len(normalizations)):
@@ -615,7 +615,7 @@ with open(backend_net_file, 'w') as f:
         caffe_pb2.BlobShape(dim=[1, 3, resize_height, resize_width])])
     print(net_param, file=f)
 
-AddExtraLayers(net, use_batchnorm)
+AddExtraLayers(net, use_batchnorm=True)
 
 # create normalizaion layers
 for i in range(len(normalizations)):
