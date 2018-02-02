@@ -17,8 +17,6 @@
 #include <boost/geometry/geometries/polygon.hpp>
 #include <boost/geometry/geometries/adapted/c_array.hpp>
 
-#include "mail.h"
-
 BOOST_GEOMETRY_REGISTER_C_ARRAY_CS(cs::cartesian)
 
 typedef boost::geometry::model::polygon<boost::geometry::model::d2::point_xy<double> > Polygon;
@@ -165,14 +163,14 @@ vector<tDetection> loadDetections(string file_name, bool &compute_aos,
             eval_image[c] = true;
           if (!eval_ground[c] && d.t1 != -1000 && d.t3 != -1000 && d.w > 0 && d.l > 0)
             eval_ground[c] = true;
-          if (!eval_3d[c] && d.t1 != -1000 && d.t2 != -1000 && d.t3 != -1000 && d.h > 0 && d.w > 0 && d.l > 0) 
+          if (!eval_3d[c] && d.t1 != -1000 && d.t2 != -1000 && d.t3 != -1000 && d.h > 0 && d.w > 0 && d.l > 0)
             eval_3d[c] = true;
           break;
         }
       }
     }
   }
-  
+
   fclose(fp);
   success = true;
   return detections;
@@ -443,9 +441,9 @@ void cleanData(CLASSES current_class, const vector<tGroundtruth> &gt, const vect
       valid_class = 1;
     else
       valid_class = -1;
-    
+
     int32_t height = fabs(det[i].box.y1 - det[i].box.y2);
-    
+
     // set ignored vector for detections
     if(height<MIN_HEIGHT[difficulty])
       ignored_det.push_back(1);
@@ -769,14 +767,14 @@ void saveAndPlotPlots(string dir_name,string file_name,string obj_type,vector<do
   system(command);
 }
 
-bool eval(string result_sha,Mail* mail){
+bool eval(string result_sha){
 
   // set some global parameters
   initGlobals();
 
   // ground truth and result directories
-  string gt_dir         = "data/object/label_2";
-  string result_dir     = "results/" + result_sha;
+  string gt_dir         = "data/KITTI/training/label_2car";
+  string result_dir     = "models/VGGNet/KITTI/result_test";
   string plot_dir       = result_dir + "/plot";
 
   // create output directories
@@ -794,7 +792,7 @@ bool eval(string result_sha,Mail* mail){
   vector<bool> eval_3d(NUM_CLASS, false);
 
   // for all images read groundtruth and detections
-  mail->msg("Loading detections...");
+  cout << "Loading detections..." << endl;
   for (int32_t i=0; i<N_TESTIMAGES; i++) {
 
     // file name
@@ -811,15 +809,15 @@ bool eval(string result_sha,Mail* mail){
 
     // check for errors
     if (!gt_success) {
-      mail->msg("ERROR: Couldn't read: %s of ground truth. Please write me an email!", file_name);
+      cout << "ERROR: Couldn't read: " << file_name << " of ground truth. Please write me an email!" << endl;
       return false;
     }
     if (!det_success) {
-      mail->msg("ERROR: Couldn't read: %s", file_name);
+      cout << "ERROR: Couldn't read: " << file_name << endl;
       return false;
     }
   }
-  mail->msg("  done.");
+  cout << "  done." << endl;
 
   // holds pointers for result files
   FILE *fp_det=0, *fp_ori=0;
@@ -829,7 +827,7 @@ bool eval(string result_sha,Mail* mail){
     CLASSES cls = (CLASSES)c;
     //mail->msg("Checking 2D evaluation (%s) ...", CLASS_NAMES[c].c_str());
     if (eval_image[c]) {
-      mail->msg("Starting 2D evaluation (%s) ...", CLASS_NAMES[c].c_str());
+      printf("Starting 2D evaluation (%s) ...\n", CLASS_NAMES[c].c_str());
       fp_det = fopen((result_dir + "/stats_" + CLASS_NAMES[c] + "_detection.txt").c_str(), "w");
       if(compute_aos)
         fp_ori = fopen((result_dir + "/stats_" + CLASS_NAMES[c] + "_orientation.txt").c_str(),"w");
@@ -837,7 +835,7 @@ bool eval(string result_sha,Mail* mail){
       if(   !eval_class(fp_det, fp_ori, cls, groundtruth, detections, compute_aos, imageBoxOverlap, precision[0], aos[0], EASY, IMAGE)
          || !eval_class(fp_det, fp_ori, cls, groundtruth, detections, compute_aos, imageBoxOverlap, precision[1], aos[1], MODERATE, IMAGE)
          || !eval_class(fp_det, fp_ori, cls, groundtruth, detections, compute_aos, imageBoxOverlap, precision[2], aos[2], HARD, IMAGE)) {
-        mail->msg("%s evaluation failed.", CLASS_NAMES[c].c_str());
+        printf("%s evaluation failed.\n", CLASS_NAMES[c].c_str());
         return false;
       }
       fclose(fp_det);
@@ -846,7 +844,7 @@ bool eval(string result_sha,Mail* mail){
         saveAndPlotPlots(plot_dir, CLASS_NAMES[c] + "_orientation", CLASS_NAMES[c], aos, 1);
         fclose(fp_ori);
       }
-      mail->msg("  done.");
+      printf("  done.\n");
     }
   }
 
@@ -858,18 +856,18 @@ bool eval(string result_sha,Mail* mail){
     CLASSES cls = (CLASSES)c;
     //mail->msg("Checking bird's eye evaluation (%s) ...", CLASS_NAMES[c].c_str());
     if (eval_ground[c]) {
-      mail->msg("Starting bird's eye evaluation (%s) ...", CLASS_NAMES[c].c_str());
+      printf("Starting bird's eye evaluation (%s) ...\n", CLASS_NAMES[c].c_str());
       fp_det = fopen((result_dir + "/stats_" + CLASS_NAMES[c] + "_detection_ground.txt").c_str(), "w");
       vector<double> precision[3], aos[3];
       if(   !eval_class(fp_det, fp_ori, cls, groundtruth, detections, compute_aos, groundBoxOverlap, precision[0], aos[0], EASY, GROUND)
          || !eval_class(fp_det, fp_ori, cls, groundtruth, detections, compute_aos, groundBoxOverlap, precision[1], aos[1], MODERATE, GROUND)
          || !eval_class(fp_det, fp_ori, cls, groundtruth, detections, compute_aos, groundBoxOverlap, precision[2], aos[2], HARD, GROUND)) {
-        mail->msg("%s evaluation failed.", CLASS_NAMES[c].c_str());
+        printf("%s evaluation failed.\n", CLASS_NAMES[c].c_str());
         return false;
       }
       fclose(fp_det);
       saveAndPlotPlots(plot_dir, CLASS_NAMES[c] + "_detection_ground", CLASS_NAMES[c], precision, 0);
-      mail->msg("  done.");
+      printf("  done.\n");
     }
   }
 
@@ -878,18 +876,18 @@ bool eval(string result_sha,Mail* mail){
     CLASSES cls = (CLASSES)c;
     //mail->msg("Checking 3D evaluation (%s) ...", CLASS_NAMES[c].c_str());
     if (eval_3d[c]) {
-      mail->msg("Starting 3D evaluation (%s) ...", CLASS_NAMES[c].c_str());
+      printf("Starting 3D evaluation (%s) ...\n", CLASS_NAMES[c].c_str());
       fp_det = fopen((result_dir + "/stats_" + CLASS_NAMES[c] + "_detection_3d.txt").c_str(), "w");
       vector<double> precision[3], aos[3];
       if(   !eval_class(fp_det, fp_ori, cls, groundtruth, detections, compute_aos, box3DOverlap, precision[0], aos[0], EASY, BOX3D)
          || !eval_class(fp_det, fp_ori, cls, groundtruth, detections, compute_aos, box3DOverlap, precision[1], aos[1], MODERATE, BOX3D)
          || !eval_class(fp_det, fp_ori, cls, groundtruth, detections, compute_aos, box3DOverlap, precision[2], aos[2], HARD, BOX3D)) {
-        mail->msg("%s evaluation failed.", CLASS_NAMES[c].c_str());
+        printf("%s evaluation failed.\n", CLASS_NAMES[c].c_str());
         return false;
       }
       fclose(fp_det);
       saveAndPlotPlots(plot_dir, CLASS_NAMES[c] + "_detection_3d", CLASS_NAMES[c], precision, 0);
-      mail->msg("  done.");
+      printf("  done.\n");
     }
   }
 
@@ -899,9 +897,9 @@ bool eval(string result_sha,Mail* mail){
 
 int32_t main (int32_t argc,char *argv[]) {
 
-  // we need 2 or 4 arguments!
+  // we need 2 arguments!
   if (argc!=2 && argc!=4) {
-    cout << "Usage: ./eval_detection result_sha [user_sha email]" << endl;
+    cout << "Usage: ./eval_detection result_sha" << endl;
     return 1;
   }
 
@@ -909,23 +907,16 @@ int32_t main (int32_t argc,char *argv[]) {
   string result_sha = argv[1];
 
   // init notification mail
-  Mail *mail;
-  if (argc==4) mail = new Mail(argv[3]);
-  else         mail = new Mail();
-  mail->msg("Thank you for participating in our evaluation!");
+  printf("Thank you for participating in our evaluation!\n");
 
   // run evaluation
-  if (eval(result_sha,mail)) {
-    mail->msg("Your evaluation results are available at:");
-    mail->msg("http://www.cvlibs.net/datasets/kitti/user_submit_check_login.php?benchmark=object&user=%s&result=%s",argv[2], result_sha.c_str());
+  if (eval(result_sha)) {
+    printf("Your evaluation results are available");
   } else {
-    system(("rm -r results/" + result_sha).c_str());
-    mail->msg("An error occured while processing your results.");
-    mail->msg("Please make sure that the data in your zip archive has the right format!");
+    system(("rm -r models/VGGNet/KITTI/result_test/" + result_sha).c_str());
+    printf("An error occured while processing your results.");
+    printf("Please make sure that the data in your zip archive has the right format!");
   }
-
-  // send mail and exit
-  delete mail;
 
   return 0;
 }
