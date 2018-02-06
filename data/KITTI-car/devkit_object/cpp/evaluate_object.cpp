@@ -803,7 +803,7 @@ bool eval(string result_sha){
     // read ground truth and result poses
     bool gt_success,det_success;
     vector<tGroundtruth> gt   = loadGroundtruth(gt_dir + "/" + file_name,gt_success);
-    vector<tDetection>   det  = loadDetections(result_dir + "/data/" + file_name,
+    vector<tDetection>   det  = loadDetections(result_dir + "/" + file_name,
             compute_aos, eval_image, eval_ground, eval_3d, det_success);
     groundtruth.push_back(gt);
     detections.push_back(det);
