@@ -9,6 +9,7 @@
 
 #include <dirent.h>
 
+#include <boost/serialization/array_wrapper.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 
@@ -773,8 +774,8 @@ bool eval(string result_sha){
   initGlobals();
 
   // ground truth and result directories
-  string gt_dir         = "data/KITTI/training/label_2car";
-  string result_dir     = "models/VGGNet/KITTI/result_test";
+  string gt_dir         = "/home/guo.chuanlei/developer/caffe/data/KITTI/training/label_2";
+  string result_dir     = "/home/guo.chuanlei/developer/caffe/models/VGGNet/KITTI/RRC_2560x768_kitti_car_b/result-test";
   string plot_dir       = result_dir + "/plot";
 
   // create output directories
