@@ -7,7 +7,7 @@ from PIL import ImageDraw
 # Make sure that the work directory is caffe_root
 caffe_root = './'
 # modify img_dir to your path of testing images of kitti
-img_dir = '/your/path/to/KITTI/testing/image_2/'
+img_dir = 'data/KITTI/training/image_2/'
 import os
 os.chdir(caffe_root)
 import sys
@@ -17,14 +17,14 @@ from caffe.proto import caffe_pb2
 
 import caffe
 from _ensemble import *
-caffe.set_device(0)
+caffe.set_device(1)
 caffe.set_mode_gpu()
-num_img =7518
-model_def = 'models/VGGNet/KITTI/RRC_2560x768_kitti_car/deploy.prototxt'
-model_weights = 'models/VGGNet/KITTI/RRC_2560x768_kitti_car/VGG_KITTI_RRC_2560x768_kitti_car_iter_60000.caffemodel'
+num_img = 7481
+model_def = 'models/VGGNet/KITTI/RRC_2560x768_kitti_car_b/deploy.prototxt'
+model_weights = 'models/VGGNet/KITTI/RRC_2560x768_kitti_car_b/VGG_KITTI_RRC_2560x768_kitti_car_b_iter_40000.caffemodel'
 voc_labelmap_file = caffe_root+'data/KITTI-car/labelmap_voc.prototxt'
-save_dir = 'models/VGGNet/KITTI/RRC_2560x768_kitti_car/result-test/'
-txt_dir = 'models/VGGNet/KITTI/RRC_2560x768_kitti_car/result-test/'
+save_dir = 'models/VGGNet/KITTI/RRC_2560x768_kitti_car_b/result-test/'
+txt_dir = 'models/VGGNet/KITTI/RRC_2560x768_kitti_car_b/result-test/'
 
 detection_out_num = 3
 if not(os.path.exists(txt_dir)):
