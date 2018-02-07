@@ -30,8 +30,8 @@ STATIC EVALUATION PARAMETERS
 =======================================================================*/
 
 // holds the number of test images on the server
-const int32_t N_TESTIMAGES = 7518;
-//const int32_t N_TESTIMAGES = 7480;
+//const int32_t N_TESTIMAGES = 7518;
+const int32_t N_TESTIMAGES = 7480;
 
 // easy, moderate and hard evaluation level
 enum DIFFICULTY{EASY=0, MODERATE=1, HARD=2};
@@ -774,8 +774,8 @@ bool eval(string result_sha){
   initGlobals();
 
   // ground truth and result directories
-  string gt_dir         = "/home/guo.chuanlei/developer/caffe/data/KITTI/training/label_2";
-  string result_dir     = "/home/guo.chuanlei/developer/caffe/models/VGGNet/KITTI/RRC_2560x768_kitti_car_b/result-test";
+  string gt_dir         = "/Users/chuan/Desktop/SSD_TEST/label_2";
+  string result_dir     = "/Users/chuan/Desktop/SSD_TEST/result-test";
   string plot_dir       = result_dir + "/plot";
 
   // create output directories
