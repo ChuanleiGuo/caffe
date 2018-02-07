@@ -345,7 +345,7 @@ solver_param = {
     'momentum': 0.9,
     'iter_size': iter_size,
     'max_iter': 60000,
-    'snapshot': 5000,
+    'snapshot': 2500,
     'display': 10,
     'average_loss': 10,
     'type': "SGD",
@@ -430,7 +430,7 @@ net[name] = L.MultiBoxLoss(*mbox_layers, multibox_loss_param=multibox_loss_param
 for roll_idx in range(1,rolling_time+1):
 ##################
     roll_layers = CreateRollingStruct_v1(net,from_layers_basename=mbox_source_layers,num_outputs=num_outputs,odd=odd,
-        rolling_rate=rolling_rate,roll_idx=roll_idx,conv2=False, Normalize=False)
+        rolling_rate=rolling_rate,roll_idx=roll_idx,conv2=False, Normalize=True)
 
     mbox_layers = CreateMultiBoxHead_share_2x(net, data_layer='data', from_layers=roll_layers,
             use_batchnorm=use_batchnorm, min_sizes=min_sizes, max_sizes=max_sizes,
@@ -521,7 +521,7 @@ net[name] = L.Concat(*priorbox_layers, axis=2)
 #==============================================================================
 for roll_idx in range(1,rolling_time+1):
     roll_layers = CreateRollingStruct_v1(net,from_layers_basename=mbox_source_layers,num_outputs=num_outputs,odd=odd,rolling_rate=rolling_rate,
-                                        roll_idx=roll_idx,conv2=False, Normalize=False)
+                                        roll_idx=roll_idx,conv2=False, Normalize=True)
 
 #==============================================================================
 mbox_layers = CreateMultiBoxHead_share_2x(net, data_layer='data', from_layers=roll_layers,
@@ -625,7 +625,7 @@ rolling_time = 2
 #==============================================================================
 for roll_idx in range(1,rolling_time+1):
     roll_layers = CreateRollingStruct_v1(net,from_layers_basename=mbox_source_layers,num_outputs=num_outputs,odd=odd,rolling_rate=rolling_rate,
-                                roll_idx=roll_idx,conv2=False,Normalize=False)
+                                roll_idx=roll_idx,conv2=False,Normalize=True)
     mbox_layers = CreateMultiBoxHead_share_2x(net, data_layer='data', from_layers=roll_layers,
             use_batchnorm=use_batchnorm, min_sizes=min_sizes, max_sizes=max_sizes,
             aspect_ratios=aspect_ratios, normalizations=normalizations2,
