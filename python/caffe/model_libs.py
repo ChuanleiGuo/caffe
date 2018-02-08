@@ -1078,22 +1078,21 @@ def CreateRollingStruct_v1(net,from_layers_basename=[],num_outputs=[],odd=[],rol
     for i in range(len(from_layers)):
         f_layers = []
         num_out = int(num_outputs[i]*rolling_rate)
-        # pooling
-        # WARNING: removed forward
-        # if i > 0:
-        #     f_layer=from_layers[i-1]
-        #     o_layer='%s_r%d'%(from_layers_basename[i-1],roll_idx)
-        #     kwargs = {
-        #     'param': [dict(name='%s_r_w'%(from_layers_basename[i-1]),lr_mult=1, decay_mult=1), dict(name='%s_r_b'%(from_layers_basename[i-1]),lr_mult=2, decay_mult=0)],
-        #     'weight_filler': dict(type='xavier'),
-        #     'bias_filler': dict(type='constant', value=0)}
-        #     net[o_layer]=L.Convolution(net[f_layer],num_output=num_out, kernel_size=1, stride=1, **kwargs)
-        #     # if BN:
-        #     #     AddBN(net,o_layer)
-        #     net['relu_%s'%(o_layer)]=L.ReLU(net[o_layer],in_place=True)
-        #     net['pool_%s'%(o_layer)]=L.Pooling(net[o_layer],pool=P.Pooling.MAX, kernel_size=2, stride=2,in_place=True)
+#pooling
+        if i > 0:
+            f_layer=from_layers[i-1]
+            o_layer='%s_r%d'%(from_layers_basename[i-1],roll_idx)
+            kwargs = {
+            'param': [dict(name='%s_r_w'%(from_layers_basename[i-1]),lr_mult=1, decay_mult=1), dict(name='%s_r_b'%(from_layers_basename[i-1]),lr_mult=2, decay_mult=0)],
+            'weight_filler': dict(type='xavier'),
+            'bias_filler': dict(type='constant', value=0)}
+            net[o_layer]=L.Convolution(net[f_layer],num_output=num_out, kernel_size=1, stride=1, **kwargs)
+            # if BN:
+            #     AddBN(net,o_layer)
+            net['relu_%s'%(o_layer)]=L.ReLU(net[o_layer],in_place=True)
+            net['pool_%s'%(o_layer)]=L.Pooling(net[o_layer],pool=P.Pooling.MAX, kernel_size=2, stride=2,in_place=True)
 
-        #     f_layers.append(net[o_layer])
+            f_layers.append(net[o_layer])
 
         f_layers.append(net[from_layers[i]])
 
@@ -1156,9 +1155,9 @@ def CreateRollingStruct_v1(net,from_layers_basename=[],num_outputs=[],odd=[],rol
                 o_layer = '%s_deconv'%(f_layer)
                 net[o_layer]=L.Deconvolution(net[f_layer],convolution_param=convolution_param, **kwargs)
             f_layers.append(net[o_layer])
-        #concat
+#concat
         o_layer='%s_concat_%d'%(from_layers_basename[i],roll_idx)
-        net[o_layer]=L.Concat(*f_layers,axis=1)
+        net[o_layer]=L.Concat(*f_layers,axis = 1)
 
         f_layer = o_layer
         o_layer = '%s_%d'%(from_layers_basename[i],roll_idx+1)
