@@ -296,6 +296,7 @@ multibox_loss_param = {
     'neg_pos_ratio': neg_pos_ratio,
     'neg_overlap': 0.5,
     'code_type': code_type,
+    'ignore_cross_boundary_bbox': False,
     }
 loss_param = {
     'normalization': normalization_mode,
